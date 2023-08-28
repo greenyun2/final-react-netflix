@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { motion, useAnimation, useScroll } from 'framer-motion';
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useMatch, useSearchParams, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 
 
 const StyleNav = styled(motion.nav)`
@@ -51,7 +52,7 @@ const StyleItem = styled.li`
   }
 `;
 
-const StyleSearch = styled.span`
+const StyleSearch = styled.form`
   color: #fff;
   svg {
     height: 20px;
@@ -109,6 +110,10 @@ const navVariants = {
   },
 }
 
+interface IForm {
+  keyWord: string;
+};
+
 const Header = () => {
   // 인풋 토글 애니메이션
   const [searchOpen, setSearchOpen] = useState(false);
@@ -144,6 +149,13 @@ const Header = () => {
     setSearchOpen((prev) => !prev);
   };
 
+  const { register, handleSubmit } = useForm<IForm>();
+  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const onValid = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyWord}`);
+  };
+
   return (
     <StyleNav 
     variants={navVariants}
@@ -175,7 +187,8 @@ const Header = () => {
         </StyleItems>
       </StyleCol>
       <StyleCol>
-        <StyleSearch  >
+        <StyleSearch 
+        onSubmit={handleSubmit(onValid)} >
         <motion.svg 
         onClick={toggleSearch}
         fill='currentColor'
@@ -189,6 +202,7 @@ const Header = () => {
         />
         </motion.svg>
         <StyleInput 
+        {...register('keyWord', {required: true, minLength: 1})}
         initial={{scaleX: 0}}
         animate={inputAnimation} 
         transition={{type: 'linear'}}

@@ -4,4 +4,5 @@ h2 {
   justify-content: center;
   grid-template-columns: repeat(6, 1fr);
   border: 1px solid red;
+  align-self: center;
 }
